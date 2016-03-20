@@ -13,12 +13,11 @@ import java.io.*;
  */
 public class SI18n {
 
-    public static final File localeDir = new File("lang/");
     private static String defaultLocale = "en";
     private static final Table<String, String, String> localizations = HashBasedTable.create();
 
     public static void findAndInjectLocales() throws IOException {
-        findAndInjectLocales(localeDir);
+        findAndInjectLocales(LocalizationLoader.LANG_DIR);
     }
 
     public static void findAndInjectLocales(File dir) throws IOException {
