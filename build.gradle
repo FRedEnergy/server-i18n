@@ -11,8 +11,12 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
 
-version = "1.0.0"
+def build_number = System.getenv("BUILD_NUMBER")
+def build_status = build_number ? "-" + build_number : "-unknown"
+
+version = "1.0.1" + build_status
 group= "ru.skymine.i18n" 
 archivesBaseName = "server-i18n"
 
@@ -33,5 +37,18 @@ processResources{
         
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: System.getenv("NEXUS_URL")) {
+                authentication(userName: System.getenv("NEXUS_LOGIN"), password: System.getenv("NEXUS_PASSWORD"))
+            }
+            pom.version = project.version
+            pom.artifactId = archivesBaseName
+            pom.groupId = project.group
+        }
     }
 }
