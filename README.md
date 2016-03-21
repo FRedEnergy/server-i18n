@@ -37,6 +37,6 @@ That how it looks
 ```
 String localized = SI18n.get("key") //to access localized string by key
 String localizedFormatted = SI18n.get("key.formatted", 3.14f) //you can provided arguments for formatting after key
-String localizedSpecialLocale = SI18n.("fr", "key") //explicitly specifying locale 
+String localizedSpecialLocale = SI18n.getL("fr", "key") //explicitly specifying locale 
 ```
             
