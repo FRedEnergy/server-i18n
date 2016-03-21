@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Localized
@@ -38,13 +39,16 @@ public class LocalizationLoader {
 
     private void extractLocalesFrom(Class clazz){
         try {
+            String modid = ((Mod)clazz.getAnnotation(Mod.class)).modid();
             List<String> files = IOUtils.readLines(clazz.getClassLoader().getResourceAsStream(LANG_DIR_PATH), Charsets.UTF_8);
             for (String file : files) {
                 InputStream data = clazz.getClassLoader().getResourceAsStream(LANG_DIR_PATH + file);
-                File destination = new File(LANG_DIR, file);
+                File destinationDir = new File(LANG_DIR + File.separator + modid);
+                File destination = new File(destinationDir, file);
                 if(destination.exists()) {
                     continue;
                 } else {
+                    destinationDir.mkdir();
                     destination.createNewFile();
                 }
                 FileUtils.copyInputStreamToFile(data, destination);

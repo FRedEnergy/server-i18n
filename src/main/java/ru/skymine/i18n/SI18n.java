@@ -2,9 +2,13 @@ package ru.skymine.i18n;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import org.apache.commons.compress.compressors.FileNameUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Server side localization
@@ -22,10 +26,12 @@ public class SI18n {
 
     public static void findAndInjectLocales(File dir) throws IOException {
         if(dir.isDirectory() && dir.exists()){
-            for(File file: dir.listFiles())
-                if(file.isFile() && file.getName().endsWith(".lang")) {
-                    injectLocale(FilenameUtils.getBaseName(file.getAbsolutePath()), new FileReader(file));
-                }
+            Collection<File> files = FileUtils.listFiles(dir, new String[]{"lang"}, true);
+            for(File file: files){
+                FileReader reader = new FileReader(file);
+                injectLocale(FilenameUtils.getBaseName(file.getAbsolutePath()), reader);
+                reader.close();
+            }
         } else {
             dir.mkdir();
         }
@@ -41,10 +47,10 @@ public class SI18n {
     }
 
     public static String get(String key, Object ... data){
-        return get(defaultLocale, key, data);
+        return getL(defaultLocale, key, data);
     }
 
-    public static String get(String locale, String key, Object ... data){
+    public static String getL(String locale, String key, Object ... data){
         if(localizations.contains(locale, key)) {
             return String.format(localizations.get(locale, key), data);
         } else {
