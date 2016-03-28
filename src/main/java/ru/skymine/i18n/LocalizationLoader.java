@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.List;
@@ -49,26 +50,24 @@ public class LocalizationLoader {
     }
 
     private void extractLocalesFrom(File source){
-        try {
-            JarFile file = new JarFile(source);
+        try(JarFile file = new JarFile(source)) {
             Enumeration<JarEntry> entries = file.entries();
             while(entries.hasMoreElements()){
                 JarEntry entry = entries.nextElement();
                 if(entry.getName().startsWith(LANG_DIR_PATH)){
-                    InputStreamReader reader = new InputStreamReader(file.getInputStream(entry));
-                    SI18n.injectLocale(FilenameUtils.getBaseName(entry.getName()), reader);
-                    reader.close();
+                    try(InputStreamReader reader = new InputStreamReader(file.getInputStream(entry))) {
+                        SI18n.injectLocale(FilenameUtils.getBaseName(entry.getName()), reader);
+                    }
                 }
             }
-            file.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void extractLocalesFrom(Class clazz){
-        try {
-            List<String> files = IOUtils.readLines(clazz.getClassLoader().getResourceAsStream(LANG_DIR_PATH), Charsets.UTF_8);
+        try(InputStream clspthResources = clazz.getClassLoader().getResourceAsStream(LANG_DIR_PATH)) {
+            List<String> files = IOUtils.readLines(clspthResources, Charsets.UTF_8);
             for (String file : files) {
                 InputStreamReader data = new InputStreamReader(clazz.getClassLoader().getResourceAsStream(LANG_DIR_PATH + file));
                 SI18n.injectLocale(FilenameUtils.getBaseName(file), data);
