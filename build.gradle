@@ -21,7 +21,7 @@ group= "ru.skymine.i18n"
 archivesBaseName = "server-i18n"
 
 minecraft {
-    version = "1.9-12.16.0.1776-1.9"
+    version = System.getenv("FORGE_VERSION") ?: "1.9-12.16.0.1770-1.9"
     runDir = "eclipse"
     mappings = "snapshot_20160312"
 }
