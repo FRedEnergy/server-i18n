@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import scala.Predef;
 
 import java.io.*;
 import java.util.Collection;
@@ -32,11 +33,13 @@ public class SI18n {
     }
 
     public static String getL(String locale, String key, Object ... data){
-        if(localizations.contains(locale, key)) {
-            return String.format(localizations.get(locale, key), data);
-        } else {
-            return key;
-        }
+        String localized = localizations.get(locale, key);
+        if(localized != null)
+            if (data.length != 0)
+                return String.format(locale, data);
+            else
+                return localized;
+        return key;
     }
 
     public static String getDefaultLocale() {
